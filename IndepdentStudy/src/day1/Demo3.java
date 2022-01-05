@@ -1,6 +1,7 @@
 package day1;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.*;
 
 public class Demo3 {
 

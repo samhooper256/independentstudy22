@@ -1,4 +1,4 @@
-package day1complete;
+package day1demoscomplete;
 
 import java.util.*;
 
