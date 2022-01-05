@@ -11,6 +11,11 @@ public class Demo3 {
 		List<String> names = List.of("Dhruv", "Adi", "Sam", "Nawaf", "Aditi", "Yasmeen", "Akshee", "Andy", "Angie",
 				"Angali", "Betsegaw", "Julia", "Linh", "Maddie", "Reagan", "Vaibhav", "Victoria");
 		
+		Map<Integer, Set<String>> map = names.stream()
+				.collect(Collectors.groupingBy(String::length, Collectors.toCollection(TreeSet::new)));
+		
+		map.forEach((k, v) -> System.out.printf("%s : %s%n", k, v));
+				
 	}
 	
 }

@@ -8,6 +8,10 @@ public class Demo1 {
 		/* Given this int[], add 5 to every value then convert it to a List<Integer>.*/
 		int[] nums = {1, 6, 23, 5, 0, 18};
 		
+		List<Integer> list = Arrays.stream(nums).map(x -> x + 5).boxed().toList();
+		
+		System.out.println(list);
+		
 	}
 	
 }
