@@ -47,13 +47,14 @@ public class Examples2 {
 		return 0;
 	}
 	
-	/* Example 7: Given an int[], return the first positive (and non-zero) number in the list, or return -1 if
+	/* Example 7: Given an int[], return the first positive (and non-zero) number in the array, or return -1 if
 	 * there are no positive numbers. */
 	public static int firstPositive(int[] arr) {
 		return 0;
 	}
 	
-	/* Example 8: Given an int[], return true iff all even numbers are also multiples of four, false otherwise. */
+	/* Example 8: Given an int[], return true iff all even numbers are also multiples of four, false otherwise. Return
+	 * true if the array contains no even numbers. */
 	public static boolean even4(int[] arr) {
 		return false;
 	}

@@ -313,23 +313,70 @@ public class Tester2 {
 	}
 	
 	private static TestResult test4() {
-		return TestResult.FAILURE;
+		return TestResult.build(
+			Examples2.noThrees(new int[] {}),
+			Examples2.noThrees(new int[] {7}),
+			!Examples2.noThrees(new int[] {3}),
+			Examples2.noThrees(new int[] {934, 4, -9, 88}),
+			!Examples2.noThrees(new int[] {9343, 3, 405025, 554, -34, -4, 33, 623}),
+			!Examples2.noThrees(new int[] {3, 3, 3, 3, 3, 3}),
+			!Examples2.noThrees(new int[] {6, 2, 7, 24, 6, 3, 66, 243, 5, 5, 2, 3}),
+			Examples2.noThrees(new int[] {6, 2, 7, 24, 6, 31, 66, 243, 5, 5, 2, 31})
+		);
 	}
 	
 	private static TestResult test5() {
-		return TestResult.FAILURE;
+		boolean result = true;
+		List<List<String>> list = new ArrayList<>();
+		result &= Examples2.flatten(list).equals(new ArrayList<>());
+		list.add(listOf("a"));
+		result &= Examples2.flatten(list).equals(listOf("a"));
+		list.add(listOf("b", "c"));
+		result &= Examples2.flatten(list).equals(listOf("a", "b", "c"));
+		list.add(listOf("d", "e", "f"));
+		result &= Examples2.flatten(list).equals(listOf("a", "b", "c", "d", "e", "f"));
+		List<List<Integer>> integers = listOf(listOf(1, 2), listOf(3), listOf(), listOf(4, 5, 6, 7));
+		result &= Examples2.flatten(integers).equals(listOf(1, 2, 3, 4, 5, 6, 7));
+		return TestResult.build(result);
 	}
 	
 	private static TestResult test6() {
-		return TestResult.FAILURE;
+		return TestResult.build(
+			Examples2.emptyCount(listOf()) == 0,
+			Examples2.emptyCount(listOf(listOf())) == 1,
+			Examples2.emptyCount(listOf(listOf("a"))) == 0,
+			Examples2.emptyCount(listOf(listOf("a"), listOf())) == 1,
+			Examples2.emptyCount(listOf(listOf("a"), listOf("a"))) == 0,
+			Examples2.emptyCount(listOf(listOf("a"), listOf(), setOf())) == 2,
+			Examples2.emptyCount(listOf(listOf("a"), listOf("a", "b", "c", "d"), setOf())) == 1,
+			Examples2.emptyCount(listOf(listOf("a"), listOf("a", "b", "c", "d"), setOf("_"))) == 0
+		);
 	}
 
 	private static TestResult test7() {
-		return TestResult.FAILURE;
+		return TestResult.build(
+			Examples2.firstPositive(new int[] {}) == -1,
+			Examples2.firstPositive(new int[] {3}) == 3,
+			Examples2.firstPositive(new int[] {-3}) == -1,
+			Examples2.firstPositive(new int[] {-3, -4, -1, 7, 8, 9}) == 7,
+			Examples2.firstPositive(new int[] {-3, -9, 0, 0}) == -1,
+			Examples2.firstPositive(new int[] {0}) == -1,
+			Examples2.firstPositive(new int[] {8, -1, -1, -1, 9}) == 8,
+			Examples2.firstPositive(new int[] {-5, 4, 8, -9, 9}) == 4
+		);
 	}
 	
 	private static TestResult test8() {
-		return TestResult.FAILURE;
+		return TestResult.build(
+			Examples2.even4(new int[] {}),
+			Examples2.even4(new int[] {3, 7, 9}),
+			!Examples2.even4(new int[] {2, 7, 9}),
+			!Examples2.even4(new int[] {2, 4, 6}),
+			Examples2.even4(new int[] {12, 4, 64}),
+			Examples2.even4(new int[] {3, 5, 4, 4, 8}),
+			!Examples2.even4(new int[] {32, 5, 4, 4, 8, 10}),
+			!Examples2.even4(new int[] {3, 5, 4, 4, 8, 10})
+		);
 	}
 	
 	private static TestResult test9() {
