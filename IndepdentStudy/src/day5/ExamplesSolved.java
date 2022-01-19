@@ -4,8 +4,8 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.*;
 
-//This file only contains the code I wrote in class. See ExamplesSolved.java to for full solutions.
-public class Examples {
+/** @author Sam Hooper */
+public class ExamplesSolved {
 	
 	/* NOTES:
 	 * - All examples should be done in one statement (that is, one semicolon).
@@ -29,7 +29,7 @@ public class Examples {
 	/* Example 3: Given a T[], return a Stream<T> containing only its elements from index startInclusive to the end of
 	 * the array. Assume the index is valid (specifically, that 0 <= startInclusive <= arr.length). */
 	public static <T> Stream<T> streamFrom(T[] arr, int startInclusive) {
-		return null;
+		return Arrays.stream(arr, startInclusive, arr.length);
 	}
 	
 	/* Example 4: Given an int[], return an IntStream containing only its elements from index startInclusive to
@@ -41,16 +41,15 @@ public class Examples {
 	
 	/* Example 5 (H): Given a List<T>, return a Stream<T> containing only its elements from index startInclusive to
 	 * index endExclusive.
-	 * Assume the indices are valid (specifically, that 0 <= startInclusive <= endExclusive <= list.size()).*/
+	 * Assume the indices are valid (specifically, that 0 <= startInclusive <= endExclusive <= arr.length).*/
 	public static <T> Stream<T> streamFrom(List<T> list, int startInclusive, int endExclusive) {
-		return null;
+		return list.subList(startInclusive, endExclusive).stream();
 	}
 	
 	/* Example 6: Given a List<?>, print out all of its elements, each on its own line, in the order they appear in the
 	 * list. */
 	public static void printAll(List<?> list) {
-		list.stream().forEachOrdered(System.out::println);
-//		list.stream().forEachOrdered(obj -> System.out.println(obj));
+		list.forEach(System.out::println);
 	}
 	
 	/* Example 7: Given a List<Integer>, print out each integer times two, each on its own line, in the order they
@@ -60,9 +59,7 @@ public class Examples {
 	 * 6
 	 * */
 	public static void printDoubled(List<Integer> list) {
-		list.stream().map(x -> x * 2).forEachOrdered(System.out::println);
-//		list.stream().forEachOrdered(x -> System.out.println(x * 2));
-//		list.forEach(x -> System.out.println(x * 2));
+		list.forEach(x -> System.out.println(x * 2));
 	}
 	
 	/* Example 8: Given a List<Integer>, return an int[] containing the same numbers in the same order. */
@@ -80,13 +77,12 @@ public class Examples {
 	 * appear. For example, if given the list [rug, heart, ok], return the array [3, 5, 2]. */
 	public static int[] getLengths(List<String> list) {
 		return list.stream().mapToInt(String::length).toArray();
-//		return list.stream().mapToInt(s -> s.length()).toArray();
 	}
 	
 	/* Example 11 (H): Given an int[], return a double[] containing the same numbers, but halved. For example, if given
 	 * [1, 2, 3], return [0.5, 1.0, 1.5]. */
 	public static double[] half(int[] nums) {
-		return null;
+		return Arrays.stream(nums).mapToDouble(x -> x / 2.0).toArray();
 	}
 	
 	/* Example 12: Given a List<String>, return a String[] containing only the strings of even length from the list in
@@ -98,7 +94,7 @@ public class Examples {
 	/* Example 13: Given a List<String>, return an int[] containing only the lengths of the even-lengthed strings from
 	 * the list in the order they appear. For example, if given [okay, not, bamboozled], return [4, 10]. */
 	public static int[] evenLengths(List<String> list) {
-		return null;
+		return list.stream().filter(s -> s.length() % 2 == 0).mapToInt(String::length).toArray();
 	}
 	
 	/* Example 14: Given a String[], return a new String[] containing only the unique elements. The order of the strings
@@ -110,37 +106,36 @@ public class Examples {
 	/* Example 15 (H): Given a Set<Double>, return a double[] containing only the square roots of the non-negative
 	 * numbers in the set. The order of the doubles in the returned array does not matter. */
 	public static double[] squareRoots(Set<Double> set) {
-		return null;
+		return set.stream().filter(x -> x >= 0).mapToDouble(Math::sqrt).toArray();
 	}
 	
 	/* Example 16: Given a List<String>, return a String[] containing the same elements but in sorted order and omitting
 	 * any nulls. The given list may contain nulls. For example, if given [hi, (null), act, bear, (null)],
 	 * return [act, bear, hi]. */
 	public static String[] sortedWithoutNulls(List<String> list) {
-		return null;
+		return list.stream().filter(s -> s != null).sorted().toArray(String[]::new);
 	}
 	
 	/* Example 17: Given a String[], return a String[] containing the same strings but sorted by length and with all the
 	 * strings with less than 3 characters removed. Assume that the given strings have unique lengths.
 	 * For example, if given [s, antithetical, tear, pit, or, cackle], return [pit, tear, cackle, antithetical]. */
 	public static String[] sortedByLength(String[] strs) {
-		return Arrays.stream(strs)
-				.filter(s -> s.length() >= 3)
-				.sorted(Comparator.comparing(String::length))
+		return Arrays.stream(strs).filter(s -> s.length() >= 3).sorted(Comparator.comparing(String::length))
 				.toArray(String[]::new);
 	}
 	
 	/* Example 18: Given a List<Integer>, return an int[] containing the distinct even elements sorted in descending
 	 * order. All numbers will be non-negative. For example, if given [3, 4, 8, 4, 2, 1, 2, 2], return [8, 4, 2]. */
 	public static int[] evensDescending(List<Integer> list) {
-		return null;
+		return list.stream().filter(x -> x % 2 == 0).distinct().sorted(Comparator.reverseOrder()).mapToInt(x -> x)
+				.toArray();
 	}
 	
 	/* Example 19: Given a List<Integer>, return an int[] containing the elements in the list that are between min
 	 * (inclusive) and max (inclusive) AND satisfy the given predicate. The numbers in the returned array should be
 	 * in the same order as in the list. Assume min <= max. */
 	public static int[] inRangeSatisfying(List<Integer> list, int min, int max, Predicate<? super Integer> condition) {
-		return null;
+		return list.stream().filter(x -> min <= x && x <= max && condition.test(x)).mapToInt(x -> x).toArray();
 	}
 	
 	/* Example 20 (H): Given a List<String>, return the String[] that would be created if you kept only the strings that
@@ -150,7 +145,10 @@ public class Examples {
 	 * [hi, (null), longstring, same, sam3, cooked, paint, taint, party, crashing, parrot, (null)], return
 	 * [(null), (null), paint, party, taint, sam3, same, hi]. */
 	public static String[] finalBoss(List<String> strs) {
-		return null;
+		return strs.stream().filter(s -> s == null || s.length() < 6).sorted(
+				Comparator.nullsFirst(Comparator.comparing(String::length)
+						.reversed().thenComparing(Comparator.naturalOrder())))
+				.toArray(String[]::new);
 	}
 	
 	
