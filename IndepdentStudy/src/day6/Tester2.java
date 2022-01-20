@@ -1,60 +1,11 @@
 package day6;
 
-import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.*;
 
 /** @author Sam Hooper */
 public class Tester2 {
-
-	private static class TestOutputStream extends OutputStream {
-
-		private final StringBuilder text;
-		
-		public TestOutputStream() {
-			text = new StringBuilder();
-		}
-		
-		@Override
-		public void write(int b) throws IOException {
-			text.append((char) b);
-		}
-		
-		public StringBuilder builder() {
-			return text;
-		}
-		
-	}
-	
-	private static class TestPrintStream extends PrintStream {
-		
-		private final TestOutputStream tos;
-		
-		public TestPrintStream() {
-			this(new TestOutputStream());
-		}
-		
-		private TestPrintStream(TestOutputStream tos) {
-			super(tos, true);
-			this.tos = tos;
-		}
-		
-		public String text() {
-			return tos.builder().toString();
-		}
-		
-		public void clearOutput() {
-			tos.builder().delete(0, tos.builder().length());
-		}
-		
-		public String scrape() {
-			String text = text();
-			clearOutput();
-			return text;
-		}
-		
-	}
 	
 	private static class TestResult {
 		
@@ -101,23 +52,17 @@ public class Tester2 {
 		
 	}
 	
-	private static final Pattern LF = Pattern.compile("\n"), TOKENIZER = Pattern.compile("(?=[-,])|(?<=[-,])");
+	private static final Pattern TOKENIZER = Pattern.compile("(?=[-,])|(?<=[-,])");
 	
-	private static TestPrintStream tps;
-	private static PrintStream systemOut;
 	private static Set<Integer> toTest;
 	private static Scanner in;
 	
 	public static void main(String[] args) {
 		in = new Scanner(System.in);
 		toTest = getInput();
-		tps = new TestPrintStream();
-		systemOut = System.out;
-		System.setOut(tps);
 		Map<Integer, TestResult> map = new LinkedHashMap<>();
 		for(int i : toTest)
 			map.put(i, test(i));
-		System.setOut(systemOut);
 		for(Map.Entry<Integer, TestResult> e : map.entrySet())
 			System.out.printf("%2d %s %s%n", e.getKey(), e.getValue().isSuccess() ? "-" : ">>>", e.getValue());
 	}
@@ -173,56 +118,8 @@ public class Tester2 {
 		return listOf(TOKENIZER.split(line.trim().replace(" ", "")));
 	}
 	
-	@SafeVarargs
-	private static <T> boolean matches(Stream<T> stream, T... items) {
-		return Arrays.equals(stream.toArray(), items);
-	}
-	
-	private static <T> boolean matches(Stream<T> stream, Collection<T> items) {
+	private static <T> boolean matches(Stream<T> stream, List<T> items) {
 		return Arrays.equals(stream.toArray(), items.toArray());
-	}
-	
-	private static <T> boolean matchesIgnoringOrder(Stream<T> stream, Set<T> items) {
-		return items.equals(toSet(stream));
-	}
-	
-	private static <T> boolean equalsIgnoringOrder(double[] a, double... b) {
-		return Arrays.equals(Arrays.stream(a).sorted().toArray(), Arrays.stream(b).sorted().toArray());
-	}
-	
-	private static <T> boolean matches(IntStream stream, int... items) {
-		return Arrays.equals(stream.toArray(), items);
-	}
-	
-	private static boolean outputMatches(String output, List<?> objects) {
-		if(objects.isEmpty())
-			return output.isEmpty();
-		String[] split = LF.split(trimTrailing(output).replace("\r\n", "\n"));
-		if(split.length != objects.size())
-			return false;
-		for(int i = 0; i < split.length; i++)
-			if(!split[i].equals(String.valueOf(objects.get(i))))
-				return false;
-		return true;
-	}
-	
-	private static boolean scrapeAndMatch(Stream<?> stream) {
-		return scrapeAndMatch(stream.collect(Collectors.toList()));
-	}
-	
-	private static boolean scrapeAndMatch(List<?> list) {
-		return outputMatches(tps.scrape(), list);
-	}
-	
-	private static String trimTrailing(String str) {
-		for(int i = str.length() - 1; i >= 0; i--)
-			if(str.charAt(i) > ' ')
-				return str.substring(0, i + 1);
-		return "";
-	}
-	
-	private static <T> HashSet<T> toSet(Stream<T> stream) {
-		return stream.collect(Collectors.toCollection(HashSet::new));
 	}
 	
 	@SafeVarargs
@@ -238,7 +135,7 @@ public class Tester2 {
 		return Collections.unmodifiableSet(hs);
 	}
 	
-	private static final int TEST_COUNT = 15;
+	private static final int TEST_COUNT = 16;
 	
 	//Tester methods
 	private static TestResult test(int ex) {
@@ -259,6 +156,7 @@ public class Tester2 {
 				case 13: return test13();
 				case 14: return test14();
 				case 15: return test15();
+				case 16: return test16();
 			}
 		}
 		catch(Exception e) {
@@ -380,31 +278,144 @@ public class Tester2 {
 	}
 	
 	private static TestResult test9() {
-		return TestResult.FAILURE;
+		return TestResult.build(
+			Examples2.sameTwos(new int[] {}, new int[] {}),
+			Examples2.sameTwos(new int[] {1}, new int[] {}),
+			Examples2.sameTwos(new int[] {1}, new int[] {1}),
+			Examples2.sameTwos(new int[] {}, new int[] {1}),
+			Examples2.sameTwos(new int[] {1, 213}, new int[] {98, -1000000, 33}),
+			!Examples2.sameTwos(new int[] {2}, new int[] {}),
+			!Examples2.sameTwos(new int[] {}, new int[] {2}),
+			Examples2.sameTwos(new int[] {2}, new int[] {2}),
+			Examples2.sameTwos(new int[] {3, 2, 45, 98, 9, 9, 2}, new int[] {2, 34, 92, -33, -1000, 3, 3, 2}),
+			!Examples2.sameTwos(new int[] {3, 2, 45, 98, 9, 9, 2}, new int[] {2, 34, 92, -33, -1000, 3, 3, 4})
+		);
 	}
 	
 	private static TestResult test10() {
-		return TestResult.FAILURE;
+		return TestResult.build(
+			Examples2.descending(setOf()).equals(listOf()),
+			Examples2.descending(setOf(3)).equals(listOf()),
+			Examples2.descending(setOf(5, 2)).equals(listOf()),
+			Examples2.descending(setOf(-9, 0, 5)).equals(listOf()),
+			Examples2.descending(setOf(-9, 0, 5, 8)).equals(listOf(-9)),
+			Examples2.descending(setOf(-9, 0, 5, 8, 17)).equals(listOf(0, -9)),
+			Examples2.descending(setOf(-9, 0, 5, 8, 17, -100)).equals(listOf(0, -9, -100)),
+			Examples2.descending(setOf(-9, 0, 5, 8, 88, 99, 101)).equals(listOf(8, 5, 0, -9)),
+			Examples2.descending(setOf(3, 9, 2, 4, 10, 11, 8, 12)).equals(listOf(9, 8, 4, 3, 2))
+		);
 	}
 	
 	private static TestResult test11() {
-		return TestResult.FAILURE;
+		Set<Person> set1 = setOf(new Person("Sam", "Hooper"), new Person("Ayuj", "Verma"),
+				new Person("Steve", "Stevenson"), new Person("The", "Nanda"), new Person("Mister", "E"),
+				new Person("Curious", "George"), new Person("George", "Washington"), new Person("Okie", "Dokie"),
+				new Person("That", "Bot"));
+		List<Person> result1 = new ArrayList<>(set1);
+		Set<Person> set2 = setOf(new Person("Oh", "No"), new Person("I", "Can't"),
+				new Person("Think", "Of"), new Person("Any", "More"), new Person("Names", "Last"),
+				new Person("Just", "Kidding"), new Person("I", "Can"), new Person("Because", "These"),
+				new Person("Are", "Not"), new Person("Really", "Names"));
+		List<Person> result2 = new ArrayList<>(set2);
+		Collections.sort(result1, Comparator.comparing(Person::getLastName));
+		Collections.sort(result2, Comparator.comparing(Person::getLastName));
+		return TestResult.build(
+			Examples2.sortedByLastName(set1).equals(result1),
+			Examples2.sortedByLastName(set2).equals(result2)
+		);
 	}
 	
 	private static TestResult test12() {
-		return TestResult.FAILURE;
+		return TestResult.build(
+			Objects.equals(Examples2.why(listOf()), null),
+			Objects.equals(Examples2.why(listOf("hello")), null),
+			Objects.equals(Examples2.why(listOf("x-ray")), null),
+			Objects.equals(Examples2.why(listOf("xylophone")), null),
+			Objects.equals(Examples2.why(listOf("xoxo")), "xoxo"),
+			Objects.equals(Examples2.why(listOf("xoxo", "nah")), null),
+			Objects.equals(Examples2.why(listOf("yep", "xoxo")), "xoxo"),
+			Objects.equals(Examples2.why(listOf("yep", "exp", "roar")), "exp"),
+			Objects.equals(Examples2.why(listOf("yep", "roar", "exp")), "exp"),
+			Objects.equals(Examples2.why(listOf("yep", "roar", "lex", "flex")), "lex"),
+			Objects.equals(Examples2.why(listOf("yep", "roar", "t-rex", "lex", "flex")), "t-rex"),
+			Objects.equals(Examples2.why(listOf("chex", "roar", "t-rex", "lex", "flex")), "t-rex"),
+			Objects.equals(Examples2.why(listOf("chex", "roar", "t-rexy", "lex", "flex")), "lex")
+		);
 	}
 	
 	private static TestResult test13() {
-		return TestResult.FAILURE;
+		List<String> list = listOf("I", "you", "me", "new", "red", "blue", "can", "you", "chew");
+		return TestResult.build(
+			matches(Examples2.substream(listOf(1, 2, 3).stream(), 1, 3), listOf(2, 3)),
+			matches(Examples2.substream(listOf().stream(), 0, 0), listOf()),
+			matches(Examples2.substream(listOf(3).stream(), 1, 1), listOf()),
+			matches(Examples2.substream(list.stream(), 0, 0), list.subList(0, 0)),
+			matches(Examples2.substream(list.stream(), 0, 1), list.subList(0, 1)),
+			matches(Examples2.substream(list.stream(), 0, 2), list.subList(0, 2)),
+			matches(Examples2.substream(list.stream(), 0, 7), list.subList(0, 7)),
+			matches(Examples2.substream(list.stream(), 5, 7), list.subList(5, 7)),
+			matches(Examples2.substream(list.stream(), 8, 9), list.subList(8, 9)),
+			matches(Examples2.substream(list.stream(), 3, 6), list.subList(3, 6)),
+			matches(Examples2.substream(list.stream(), 4, 8), list.subList(4, 8)),
+			matches(Examples2.substream(list.stream(), 9, 9), list.subList(9, 9))
+		);
 	}
 	
 	private static TestResult test14() {
-		return TestResult.FAILURE;
+		List<Map<String, Integer>> list = new ArrayList<>();
+		boolean result = true;
+		result &= Examples2.allKeys(Collections.unmodifiableList(list)).equals(setOf());
+		Map<String, Integer> map1 = new HashMap<>(); //unfortunately, Map.of does not exist in java 8.
+		map1.put("a", 7);
+		list.add(map1);
+		result &= Examples2.allKeys(Collections.unmodifiableList(list)).equals(setOf("a"));
+		map1.put("b", 9);
+		result &= Examples2.allKeys(Collections.unmodifiableList(list)).equals(setOf("a", "b"));
+		Map<String, Integer> map2 = new HashMap<>();
+		list.add(map2);
+		result &= Examples2.allKeys(Collections.unmodifiableList(list)).equals(setOf("a", "b"));
+		map2.put("a", 19);
+		result &= Examples2.allKeys(Collections.unmodifiableList(list)).equals(setOf("a", "b"));
+		map2.put("c", 8);
+		result &= Examples2.allKeys(Collections.unmodifiableList(list)).equals(setOf("a", "b", "c"));
+		map2.put("d", 8);
+		Map<String, Integer> map3 = new HashMap<>();
+		map3.put("c", 109);
+		map3.put("z", 908);
+		list.add(map3);
+		result &= Examples2.allKeys(Collections.unmodifiableList(list)).equals(setOf("a", "b", "c", "d", "z"));
+		return TestResult.build(result);
 	}
 	
 	private static TestResult test15() {
-		return TestResult.FAILURE;
+		Person sam = new Person("Sam", "Hooper");
+		Person dhruv = new Person("Dhruv", "Nanda");
+		Person maddie = new Person("Maddie", "Bramlett");
+		Person nawaf = new Person("Nawaf", "Reaz");
+		Person adi = new Person("Adi", "Behre");
+		Person vaibhav = new Person("Vaibhav", "Shrivathsa");
+		return TestResult.build(
+			Examples2.secondHalfNames(setOf()).equals(new LinkedList<>()),
+			Examples2.secondHalfNames(setOf(sam)).equals(listOf("Sam")),
+			Examples2.secondHalfNames(setOf(dhruv)).equals(listOf()),
+			Examples2.secondHalfNames(setOf(sam, dhruv)).equals(listOf("Sam")),
+			Examples2.secondHalfNames(setOf(sam, dhruv, maddie)).equals(listOf("Sam")),
+			Examples2.secondHalfNames(setOf(sam, dhruv, maddie, nawaf)).equals(listOf("Nawaf", "Sam")),
+			Examples2.secondHalfNames(setOf(sam, dhruv, maddie, nawaf, adi, vaibhav))
+				.equals(listOf("Nawaf", "Sam", "Vaibhav"))
+		);
+	}
+	
+	private static TestResult test16() {
+		return TestResult.build(
+			Examples2.longestStrings(listOf("a", "biscuit", "philanthropy", "biscuit", "congenial", "metaphysics",
+				"ontology", "philanthropy", "nutate", "maximize")).equals(listOf("philanthropy", "metaphysics",
+				"congenial", "maximize", "ontology")),
+			Examples2.longestStrings(listOf("hmm", "let's", "see", "what", "words", "can", "Sam", "come", "up", "with",
+				"today")).equals(listOf("let's", "today", "words", "come", "what")),
+			Examples2.longestStrings(listOf("ready", "float", "heart", "crack", "poles", "horse", "cores"))
+				.equals(listOf("cores", "crack", "float", "heart", "horse"))
+		);
 	}
 	
 }
