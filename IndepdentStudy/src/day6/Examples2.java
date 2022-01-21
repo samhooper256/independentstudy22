@@ -16,66 +16,75 @@ public class Examples2 {
 	
 	/* Example 1: Given a T[], return a mutable ArrayList<T> containing the same elements. */
 	public static <T> ArrayList<T> toList(T[] arr) {
-		return null;
+		return Arrays.stream(arr).collect(Collectors.toCollection(ArrayList::new));
 	}
 	
 	/* Example 2: Given a List<String>, return true iff every string ends in "y", false otherwise. Return true if the
 	 * list is empty. The strings in the given list will all have at least one character.  */
 	public static boolean endsY(List<String> list) {
-		return false;
+		return list.stream().allMatch(s -> s.endsWith("y"));
 	}
 
 	/* Example 3: Given a List<Double>, return true iff there are any negative numbers in the list, false otherwise.
 	 * Return false if the list is empty. */
 	public static boolean anyNegatives(List<Double> list) {
-		return false;
+		return list.stream().anyMatch(x -> x < 0);
 	}
 	
 	/* Example 4: Given an int[], return true iff the array contains no multiplies of three, false otherwise. */
 	public static boolean noThrees(int[] arr) {
-		return false;
+		return Arrays.stream(arr).noneMatch(x -> x % 3 == 0);
 	}
 	
 	/* Example 5: Given a List<List<T>>, "flatten" it into a one-dimensional List<T>. For example, if given the list
 	 * [[1, 2], [3, 4, 5], [6]], return [1, 2, 3, 4, 5, 6]. */
 	public static <T> List<T> flatten(List<List<T>> lists) {
-		return null;
+		return lists.stream().flatMap(List::stream).collect(Collectors.toList());
 	}
 	
 	/* Example 6: Given a collection of collections, return the number of collections that are empty (Not including the
-	 * "outer" collection, of course - return 0 if coll is empty). */
+	 * "outer" collection, of course - return 0 if colls is empty). */
 	public static int emptyCount(Collection<? extends Collection<?>> colls) {
-		return 0;
+		return (int) colls.stream().filter(Collection::isEmpty).count();
 	}
 	
 	/* Example 7: Given an int[], return the first positive (and non-zero) number in the list, or return -1 if
 	 * there are no positive numbers. */
 	public static int firstPositive(int[] arr) {
-		return 0;
+		return Arrays.stream(arr).filter(x -> x > 0).findFirst().orElse(-1);
 	}
 	
 	/* Example 8: Given an int[], return true iff all even numbers are also multiples of four, false otherwise. Return
 	 * true if there are no even numbers in the array. */
 	public static boolean even4(int[] arr) {
-		return false;
+		return Arrays.stream(arr).filter(x -> x % 2 == 0).allMatch(x -> x % 4 == 0);
+//		return Arrays.stream(arr).allMatch(x -> x % 2 != 0 || x % 4 == 0);
+//		return Arrays.stream(arr).allMatch(x -> Math.abs(x) % 4 != 2);
 	}
 	
 	/* Example 9: Given two int[], return true iff they have the same number of 2's, false otherwise. */
 	public static boolean sameTwos(int[] arr1, int[] arr2) {
-		return false;
+		return
+				Arrays.stream(arr1).filter(x -> x % 2 == 0).count() ==
+				Arrays.stream(arr2).filter(x -> x % 2 == 0).count();
 	}
 	
 	/* Example 10: Given a Set<Integer>, return a List<Integer> containing the numbers in descending order, omitting the
 	 * three largest numbers. If the set contains three or fewer elements, return an empty list. For example, if given
 	 * [3, 9, 2, 4, 10, 11, 8, 12], return [9, 8, 4, 3, 2]. */
 	public static List<Integer> descending(Set<Integer> set) {
-		return null;
+//		Comparator.reverseOrder()
+		return set.stream().sorted(Comparator.reverseOrder()).skip(3)
+				.collect(Collectors.toList());
 	}
 	
 	/* Example 11: Given a Set<Person>, return a List<Person> containing the same people, but sorted alphabetically by
 	 * last name. No two people will have the same last name. */
 	public static List<Person> sortedByLastName(Set<Person> set) {
-		return null;
+		//Hint: use Comparator.comparing(Function) - function from Person to a thing you can compare them based on.
+		return set.stream()
+				.sorted(Comparator.comparing(Person::getLastName))
+				.collect(Collectors.toList());
 	}
 	
 	/* Example 12: Given a List<String>, return the first string in the second half of the list that contains an 'x'

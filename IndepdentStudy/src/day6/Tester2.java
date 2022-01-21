@@ -215,11 +215,11 @@ public class Tester2 {
 			Examples2.noThrees(new int[] {}),
 			Examples2.noThrees(new int[] {7}),
 			!Examples2.noThrees(new int[] {3}),
-			Examples2.noThrees(new int[] {934, 4, -9, 88}),
+			!Examples2.noThrees(new int[] {934, 4, -9, 88}),
 			!Examples2.noThrees(new int[] {9343, 3, 405025, 554, -34, -4, 33, 623}),
 			!Examples2.noThrees(new int[] {3, 3, 3, 3, 3, 3}),
 			!Examples2.noThrees(new int[] {6, 2, 7, 24, 6, 3, 66, 243, 5, 5, 2, 3}),
-			Examples2.noThrees(new int[] {6, 2, 7, 24, 6, 31, 66, 243, 5, 5, 2, 31})
+			!Examples2.noThrees(new int[] {6, 2, 7, 24, 6, 31, 66, 243, 5, 5, 2, 31})
 		);
 	}
 	
