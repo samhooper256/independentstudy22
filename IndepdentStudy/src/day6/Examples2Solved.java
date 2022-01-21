@@ -3,8 +3,7 @@ package day6;
 import java.util.*;
 import java.util.stream.*;
 
-//This file only contains the code I wrote in class. For full solutions, see Examples2Solved.java.
-public class Examples2 {
+public class Examples2Solved {
 
 	/* NOTES:
 	 * - All examples should be done in one statement (that is, one semicolon).
@@ -92,27 +91,35 @@ public class Examples2 {
 	 * character but not a 'y' character. If the list has odd size, consider the "second half" to be the larger half.
 	 * Return null if there is no qualifying string in the second half of the list. */
 	public static String why(List<String> list) {
-		return null;
+		return list.subList(list.size() / 2, list.size()).stream()
+				.filter(s -> s.contains("x") && !s.contains("y"))
+				.findFirst()
+				.orElse(null);
 	}
 	
 	/* Example 13 (H): Given a finite, ordered Stream<T>, return the "substream" of its elements from "index"
 	 * startInclusive to endExclusive. Assume the indices are valid (specifically, 0 <= startInclusive <= endExclusive,
 	 * and endExclusive is less than or equal to the number of elements in the stream). */
 	public static <T> Stream<T> substream(Stream<T> stream, int startInclusive, int endExclusive) {
-		return null;
+		return stream.skip(startInclusive).limit(endExclusive - startInclusive);
 	}
 	
 	/* Example 14 (H): Given a collection of maps with keys of the same type, return a set containing all of the
 	 * keys from all of the maps. */
 	public static <K> Set<K> allKeys(Collection<? extends Map<K, ?>> maps) {
-		return null;
+		return maps.stream().map(Map::keySet).flatMap(Set::stream).collect(Collectors.toSet());
+//		return maps.stream().flatMap(m -> m.keySet().stream()).collect(Collectors.toSet());
 	}
 	
 	/* Example 15 (H): Given a Set<Person>, return a LinkedList<String> of the first names of people whose first names
 	 * are in the second half of the alphabet (N to Z, inclusive). The names should be sorted alphabetically. You can
 	 * assume every person has a non-null first name that starts with a capital letter. */
 	public static LinkedList<String> secondHalfNames(Set<Person> set) {
-		return null;
+		return set.stream()
+				.map(Person::getFirstName)
+				.filter(s -> 'N' <= s.charAt(0) && s.charAt(0) <= 'Z')
+				.sorted()
+				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	/* Example 16 (H): Given a List<String>, return a List<String> containing the five longest distinct strings, ordered
@@ -122,7 +129,15 @@ public class Examples2 {
 	 * [philanthropy, metaphysics, congenial, maximize, ontology]
 	 */
 	public static List<String> longestStrings(List<String> list) {
-		return null;
+		return list.stream()
+				.distinct()
+				.sorted(
+					Comparator.comparing(String::length)
+					.reversed()
+					.thenComparing(Comparator.naturalOrder())
+				)
+				.limit(5)
+				.collect(Collectors.toList());
 	}
 	
 	
