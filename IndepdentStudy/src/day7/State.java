@@ -18,6 +18,7 @@ public class State {
 		return name;
 	}
 	
+	/** The returned set is unmodifiable. */
 	public Set<City> getCities() {
 		return cities;
 	}
