@@ -211,7 +211,7 @@ private static class TestResult {
 	//Static helper methods
 
 	/** unmodifiable. */
-	private static Set<Person> generatePeople(int n) {
+	public static Set<Person> generatePeople(int n) {
 		if(n > .1 * FIRST_NAMES.size() * LAST_NAMES.size() * CITIES.size())
 			throw new IllegalArgumentException("Too many people");
 		Set<Person> people = new HashSet<>();
