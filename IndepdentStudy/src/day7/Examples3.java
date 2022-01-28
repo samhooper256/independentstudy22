@@ -18,50 +18,70 @@ public class Examples3 {
 	/* Example 0 (Optional - not in tester): Given a State, return a Stream<City> of its cities. This method may be
 	 * useful for later examples :) */
 	public static Stream<City> cities(State state) {
-		return null;
+		return state.getCities().stream();
 	}
 	
 	/* Example 1: Given a List<Double>, return the product of all the numbers. There will be at least 1 number in
 	 * the list (if there is 1 number, return that number). */
 	public static double product(List<Double> list) {
-		return 0;
+//		return list.stream().reduce((a, b) -> a * b).get();
+		return list.stream().reduce(1.0, (a, b) -> a * b);
 	}
 	
 	/* Example 2: Given a Person[], return the Person with the longest last name. There will be at least one Person in
 	 * the array. */
 	public static Person longestLastName(Person[] arr) {
-		return null;
+		return Arrays.stream(arr).max(Comparator.comparing(p -> p.getLastName().length())).get();
+//		return Arrays.stream(arr).collect(Collectors.maxBy(
+//				Comparator.comparing(p -> p.getLastName().length()))).get();
+		
+//		return a ? b : c;
+		
+//		return Arrays.stream(arr).reduce((a, b) -> 
+//			a.getLastName().length() > b.getLastName().length() ? a : b
+//		).get();
 	}
 	
 	/* Example 3: Given a List<State>, return the state with the smallest population. If there are no states in the
-	 * list, return null.  */
+	 * list, return null. */
 	public static State smallestPopulation(List<State> states) {
-		return null;
+		return states.stream().min(Comparator.comparing(State::getPopulation)).orElse(null);
+//		return states.stream().collect(Collectors.minBy(
+//				Comparator.comparing(State::getPopulation))).orElse(null);
 	}
 	
 	/* Example 4: Given a collection, return a String containing the elements of that collection separated by spaces
 	 * and enclosed in curly braces. In order to get the string representation of each element, you'll have to call
 	 * toString(). For example, if given [1, 2, 3, 4, 5], return "{1 2 3 4 5}". */
 	public static String formatted(Collection<?> coll) {
-		return null;
+		return coll.stream().collect(Collectors.mapping(Object::toString, 
+				Collectors.joining(" ", "{", "}")));
+//		return coll.stream().map(Object::toString).collect(Collectors.joining(" ", "{", "}"));
 	}
 	
 	/* Example 5: Given a State, return the city in that state with the longest name. If multiple cities tie for longest
 	 * name, return any one of them. The state will have at least 1 city. */
 	public static City longestCity1(State state) {
-		return null;
+		return state.getCities().stream().max(Comparator.comparing(s -> s.getName().length())).get();
 	}
 	
 	/* Example 6 (H): Given a List<State>, consider all of the cities within all of the states. Return the city with the
 	 * longest name. If multiple cities tie for longest name, return any one of them. There will be at least 1 state,
 	 * and each state will have at least 1 city. */
 	public static City longestCity2(Collection<State> states) {
-		return null;
+		return states.stream().flatMap(Examples3::cities)
+				.max(Comparator.comparing(s -> s.getName().length())).get();
+//		return states.stream().map(Examples3::longestCity1)
+//				.max(Comparator.comparing(s -> s.getName().length())).get();
+//		return longestCity1(states.stream().max(
+//				Comparator.comparing(s -> longestCity1(s).getName().length())
+//		).get());
+		
 	}
 	
 	/* Example 7: Given a Set<String>, return a Map<String, Integer> mapping each string to its length. */
 	public static Map<String, Integer> lengthMap(Set<String> list) {
-		return null;
+		return list.stream().collect(Collectors.toMap(s -> s, String::length));
 	}
 	
 	/* Example 8 (H): Given a List<String>, return a HashMap<String, Integer> mapping each string to the number of times
@@ -73,7 +93,10 @@ public class Examples3 {
 	/* Example 9 (H): Given a List<Person>, return a Map<City, HashSet<String>> mapping each city represented to a HashSet
 	 * of the first names of all the people in that city. */
 	public static Map<City, HashSet<String>> getNames(List<Person> list) {
-		return null;
+		return list.stream().collect(Collectors.groupingBy(
+			Person::getCity,
+			Collectors.mapping(Person::getFirstName, Collectors.toCollection(HashSet::new))
+		));
 	}
 		
 	/* Example 10 (H): Given a List<String> and a String sub, return a Map<Boolean, Integer> mapping true to the # of
@@ -81,7 +104,12 @@ public class Examples3 {
 	 * true and false should be present as keys, even if one or both of them map to 0.
 	 * For example, the call subSplit([yelp, bout, hurry, yoke], "y") should return {true=3, false=1}. */
 	public static Map<Boolean, Integer> subSplit(List<String> list, String sub) {
-		return null;
+		return list.stream().collect(Collectors.partitioningBy(s -> s.contains(sub),
+				Collectors.collectingAndThen(
+					Collectors.counting(),
+					Long::intValue
+				)
+		));
 	}
 	
 	/* Example 11 (H): Given a List<State>, return a Map<String, List<Integer>> mapping each state name to a list
